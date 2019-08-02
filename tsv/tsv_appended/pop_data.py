@@ -19,7 +19,7 @@ if os.path.exists(args.startfile) and os.path.exists(args.destination):
 			
 			for row in reader:
 				infoType = row["Type"]
-				genCoord = row["Genomic Coordinate"]
+				genCoord = row["Genomic_Coordinate"]
 				base = row["Base"]
 				x1 = row["x1"]
 				y1 = row["y1"]
@@ -34,27 +34,23 @@ if os.path.exists(args.startfile) and os.path.exists(args.destination):
 				with open('pop_data.txt') as tsv:
 					reader = csv.DictReader(tsv, delimiter="\t")
 					print ('processing population data...')
-					for row in reader:
-						chrom = row["#CHROM"]
-						mutCoord = row["POS"]
-						ref = row["REF"]
-						mutation = row["ALT"]
-						result = [chrom, mutCoord, ref, mutation]
 					if infoType == "b":
-						if genCoord == mutCoord:
-							f.write('<text x="' + x1 + '" y="' + y1 + '" style = "font-size: 12; fill: red; font-family: ' + font + '; font-weight: ' + fontWeight + ';" > '
-								+ base + '<title>' + title + '</title> </text>')
-						else:
-							f.write('<text x="' + x1 + '" y="' + y1 + '" style = "font-size: 12; fill: ' + textColor
-								+ '; font-family: ' + font + '; font-weight: ' + fontWeight + ';" > '
-								+ base + '<title>' + title + '</title> </text>')
-					elif infoType == "l":
-						f.write('<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" style="stroke: '
-								+ lineColor + '; stroke-width:1; stroke-linecap: round" >' + '<title>' + x1 + ',' + y1
-								+ " " + x2 + "," + y2 + '</title> </line>')
-					elif infoType == "d":
-						f.write('<circle cx="' + x1 + '" cy="' + y1 + '" r="2" style="fill: ' + circleColor + ';" >'
-								+ '<title>' + x1 + ',' + y1 + '</title> </circle>')
+						for row in reader:
+							chrom = row["#CHROM"]
+							mutCoord = row["POS"]
+							ref = row["REF"]
+							mutation = row["ALT"]
+							result = [chrom, mutCoord, ref, mutation]
+							if (int(mutCoord) - int(genCoord)) == 0:
+								textColor = 'red'
+
+				if infoType == "b":
+					f.write('<text x="' + x1 + '" y="' + y1 + '" style = "font-size: 12; fill: ' + textColor + '; font-family: ' + font + '; font-weight: ' + fontWeight + ';" > ' + base + '<title>' + title + '</title> </text>')
+				elif infoType == "l":
+					f.write('<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" style="stroke: '	+ lineColor + '; stroke-width:1; stroke-linecap: round" >' + '<title>' + x1 + ',' + y1
+							+ " " + x2 + "," + y2 + '</title> </line>')
+				elif infoType == "d":
+					f.write('<circle cx="' + x1 + '" cy="' + y1 + '" r="2" style="fill: ' + circleColor + ';" >' + '<title>' + x1 + ',' + y1 + '</title> </circle>')
 			f.write('</svg>')
 		
 			print "Finished"
